@@ -1,0 +1,6 @@
+- hosts: localhost
+  become: yes
+ #no_log: true
+  
+  roles:
+   - stack

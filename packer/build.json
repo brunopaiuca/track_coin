@@ -1,0 +1,55 @@
+{
+    "variables" : {
+        "region"          : "us-east-1",
+        "instance_type"   : "t3.nano",
+        "ssh_username"    : "centos",
+        "ami_name_prefix" : "ami-mm",
+        "src_ami_filter"  : "*CentOS Linux 7 x86_64 HVM EBS*",
+        "Tag-Name-prefix" : "packer-builder",
+        "Tag-Tool"            : "Packer",
+        "Tag-Author"          : "BPaiuca"
+    },
+
+
+
+    "builders" : [
+        {
+            "type"            : "amazon-ebs",
+            "region"          : "{{user `region`}}",
+            "instance_type"   : "{{user `instance_type`}}",
+            "ssh_username"    : "centos",
+            "ami_name"        : "{{user `application_name`}}-{{timestamp}}",
+            "ami_description" : "{{user `ami_name_prefix`}}-{{user `application_name`}}",
+
+            "source_ami_filter": {
+                "filters": {
+                    "virtualization-type": "hvm",
+                    "name": "{{user `src_ami_filter`}}",
+                    "root-device-type": "ebs"
+                },
+
+                "most_recent": true
+            },
+
+	    "run_tags": {
+                "Name" : "{{user `Tag-Name-prefix`}}-{{user `application_name`}}",
+                "Tool" : "{{user `Tag-Tool`}}",
+                "Author" :  "{{user `Tag-Author`}}"
+            }
+
+        }
+    ],
+    "provisioners" : [
+  	{
+            "type": "file",
+            "source": "./ansible",
+            "destination": "/tmp/"
+        },
+
+        {
+            "type" : "shell",
+            "script" : "./packer/bootstrap.sh",
+	    "environment_vars" : ["ENVIRONMENT={{user `environment` }}"]
+        }
+    ]
+}

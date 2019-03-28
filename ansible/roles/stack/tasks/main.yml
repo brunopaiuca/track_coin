@@ -1,0 +1,52 @@
+---
+- name: Install packages
+  yum:
+    name: ["git","jq","python2-pip","python-virtualenv"]
+    state: latest
+
+
+
+- name: Pip Upgrade
+  command: "pip install --upgrade pip"
+
+
+- name: Copy /opt/install_awscli.sh
+  copy:
+    src: ./files/opt/install_awscli.sh
+    dest: /opt/install_awscli.sh
+    owner: root
+    group: root
+    mode: 0555
+
+
+- name: Install awscli
+  script: /opt/install_awscli.sh
+
+
+
+- name: Clone a private repository into /opt.
+  git:
+    repo: https://github.com/8go/coinbash.git
+    version: master
+    dest: /srv/coinbash/
+
+- name: Copy cron
+  copy:
+    src: ./files/etc/cron.d/track_coin.conf
+    dest: /etc/cron.d/track_coin.conf
+    owner: root
+    group: root
+    mode: 0440
+
+- name: Copy App
+  copy:
+    src: ./files/srv/app.sh
+    dest: /srv/app.sh
+    owner: root
+    group: root
+    mode: 0440
+
+- name: Enable Boot Start crond
+  service:
+    name: crond
+    enabled: yes
