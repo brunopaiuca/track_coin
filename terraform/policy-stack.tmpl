@@ -21,6 +21,13 @@
                 "ssm:GetParameter"
             ],
             "Resource": "arn:aws:ssm:${aws_region}:${aws_account_id}:parameter/${project}_topic_endpoint"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetParameter"
+            ],
+            "Resource": "arn:aws:ssm:${aws_region}:${aws_account_id}:parameter/${project}_env"
         }
     ]
 }

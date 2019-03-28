@@ -32,11 +32,19 @@ module "topic_subscription" {
 }
 
 
-module "parameter" {
+module "parameter_sns_topic_endpoint" {
   source = "./modules/ssm_parameter"
   name   = "${format("%s_topic_endpoint", var.project)}"
   type   = "String"
   value  = "${module.sns_topic.arn}"
+  customer_role_arn = "${var.customer_role_arn}"
+}
+
+module "parameter_env" {
+  source = "./modules/ssm_parameter"
+  name   = "${format("%s_env", var.project)}"
+  type   = "String"
+  value  = "${var.environment}"
   customer_role_arn = "${var.customer_role_arn}"
 }
 
